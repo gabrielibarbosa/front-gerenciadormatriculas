@@ -1,0 +1,53 @@
+<thf-page-edit t-title="Nova Turma" [t-disable-submit]="formCustomer.invalid">
+
+  <form #formCustomer="ngForm">
+    <thf-divider class="thf-md-12" t-label="Informações Básicas"></thf-divider>
+
+    <thf-input class="thf-md-6" name="descricao" [(ngModel)]="turma.descricao" t-required t-label="Descrição">
+    </thf-input>
+
+    <thf-input class="thf-md-6" name="anoLetivo" [(ngModel)]="turma.anoLetivo" t-required t-label="Ano letivo">
+    </thf-input>
+    <thf-dropdown class="thf-md-6" t-label="Período Letivo"
+      [t-actions]="[{ label: 'How to install THF', url: '/guides/how-install' }]">
+    </thf-dropdown>
+    <thf-input class="thf-md-6" name="numeroVagas" [(ngModel)]="turma.numeroVagas" t-required t-label="Numero de Vagas">
+    </thf-input>
+
+
+    <thf-divider class="thf-md-12" t-label="Adicionar Alunos"></thf-divider>
+
+
+    <thf-multiselect class="thf-md-9" name="alunos" t-label="Buscar Alunos" [t-options]="alunos">
+    </thf-multiselect>
+    <thf-button t-label="Adicionar Aluno" (t-click)="modal.open()">
+    </thf-button>
+
+    <thf-modal #modal t-title="Adicionar Aluno">
+      <form #f="ngForm">
+        <div class="thf-row">
+          <thf-input class="thf-md-6" name="Title" [(ngModel)]="title" t-clean t-label="Title" t-maxlength="30"
+            t-required>
+          </thf-input>
+        </div>
+      </form>
+    </thf-modal>
+
+    <thf-divider class="thf-md-12" t-label="Adicionar Disciplinas"></thf-divider>
+
+    <thf-multiselect class="thf-md-9" name="disciplinas" t-label="Buscar Disciplinas" [t-options]="disciplinas">
+      </thf-multiselect>
+      <thf-button t-label="Adicionar Disciplina" (t-click)="modal.open()">
+      </thf-button>
+  
+      <thf-modal #modal t-title="Adicionar Disciplina">
+        <form #f="ngForm">
+          <div class="thf-row">
+            <thf-input class="thf-md-6" name="Title" [(ngModel)]="title" t-clean t-label="Title" t-maxlength="30"
+              t-required>
+            </thf-input>
+          </div>
+        </form>
+      </thf-modal>
+  </form>
+</thf-page-edit>
