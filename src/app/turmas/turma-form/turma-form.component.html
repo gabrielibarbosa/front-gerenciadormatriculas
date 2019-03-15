@@ -1,53 +1,48 @@
-<thf-page-edit t-title="Nova Turma" [t-disable-submit]="formCustomer.invalid">
+<thf-page-edit t-title="Nova Turma">
 
-  <form #formCustomer="ngForm">
-    <thf-divider class="thf-md-12" t-label="Informações Básicas"></thf-divider>
+  <thf-stepper [t-step]="step" [t-steps]="steps" (t-change-step)="changeStep($event)">
+  </thf-stepper>
 
-    <thf-input class="thf-md-6" name="descricao" [(ngModel)]="turma.descricao" t-required t-label="Descrição">
-    </thf-input>
+  <thf-widget class="thf-md-12" t-height="380" [t-primary-label]="labelWidget" t-title="Purchase"
+    (t-primary-action)="onConfirmStep(step + 1)">
 
-    <thf-input class="thf-md-6" name="anoLetivo" [(ngModel)]="turma.anoLetivo" t-required t-label="Ano letivo">
-    </thf-input>
-    <thf-dropdown class="thf-md-6" t-label="Período Letivo"
-      [t-actions]="[{ label: 'How to install THF', url: '/guides/how-install' }]">
-    </thf-dropdown>
-    <thf-input class="thf-md-6" name="numeroVagas" [(ngModel)]="turma.numeroVagas" t-required t-label="Numero de Vagas">
-    </thf-input>
-
-
-    <thf-divider class="thf-md-12" t-label="Adicionar Alunos"></thf-divider>
-
-
-    <thf-multiselect class="thf-md-9" name="alunos" t-label="Buscar Alunos" [t-options]="alunos">
-    </thf-multiselect>
-    <thf-button t-label="Adicionar Aluno" (t-click)="modal.open()">
-    </thf-button>
-
-    <thf-modal #modal t-title="Adicionar Aluno">
-      <form #f="ngForm">
+    <ng-container *ngIf="step === 1">
+      <form [formGroup]="reactiveForm">
         <div class="thf-row">
-          <thf-input class="thf-md-6" name="Title" [(ngModel)]="title" t-clean t-label="Title" t-maxlength="30"
-            t-required>
+          <thf-input class="thf-md-12" formControlName="descricao" t-clean t-icon="thf-icon thf-icon-edit"
+            t-label="Descrição">
           </thf-input>
         </div>
+        <div class="thf-row">
+          <thf-multiselect name="periodoLetivo" formControlName="periodoLetivo" class="thf-lg-12"
+            t-label="Período Letivo" [t-options]="options">
+          </thf-multiselect>
+        </div>
+
+        <div class="thf-row">
+
+          <thf-input name="bla" class="thf-lg-6" formControlName="anoLetivo" t-clean t-label="Ano Letivo">
+          </thf-input>
+
+          <thf-number class="thf-lg-6" formControlName="numeroVagas" t-label="Número Vagas" t-clean>
+          </thf-number>
+        </div>
+
       </form>
-    </thf-modal>
+    </ng-container>
+    <ng-container *ngIf="step === 2">
+      <form [formGroup]="alunosForm">
+        <div class="thf-row">
+          <thf-number class="thf-lg-6" formControlName="matricula" t-label="Matrícula" t-clean>
+          </thf-number>
+        </div>
+        <div class="thf-row">
+          <thf-multiselect name="formaIngresso" formControlName="formaIngresso" class="thf-lg-12"
+            t-label="Forma Ingresso" [t-options]="options">
+          </thf-multiselect>
+        </div>
+      </form>
+    </ng-container>
+  </thf-widget>
 
-    <thf-divider class="thf-md-12" t-label="Adicionar Disciplinas"></thf-divider>
-
-    <thf-multiselect class="thf-md-9" name="disciplinas" t-label="Buscar Disciplinas" [t-options]="disciplinas">
-      </thf-multiselect>
-      <thf-button t-label="Adicionar Disciplina" (t-click)="modal.open()">
-      </thf-button>
-  
-      <thf-modal #modal t-title="Adicionar Disciplina">
-        <form #f="ngForm">
-          <div class="thf-row">
-            <thf-input class="thf-md-6" name="Title" [(ngModel)]="title" t-clean t-label="Title" t-maxlength="30"
-              t-required>
-            </thf-input>
-          </div>
-        </form>
-      </thf-modal>
-  </form>
 </thf-page-edit>

@@ -22,14 +22,14 @@ export class AppComponent {
       label: 'Professores', link: '/professores',
       subItems: [
         { label: 'Listar Professores', link: '/professores' },
-        { label: 'Adicionar Professor', link: '/professores/adicionar' },
+       // { label: 'Adicionar Professor', link: '/professores/adicionar' },
       ]
     },
     {
       label: 'Alunos', link: '/professores',
       subItems: [
         { label: 'Listar Alunos', link: '/alunos' },
-        { label: 'Adicionar Aluno', link: '/alunos/adicionar' },
+      //  { label: 'Adicionar Aluno', link: '/alunos/adicionar' },
       ]
     }
 
