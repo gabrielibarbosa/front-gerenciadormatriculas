@@ -1,4 +1,6 @@
-export class Aluno {
+import { Pessoa } from "../pessoa/pessoa.models";
+
+export class Aluno  extends Pessoa {
     matricula: number;
     formaIngreso: FormaIngresso;
 }

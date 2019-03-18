@@ -1,4 +1,6 @@
-export class Professor{
+import { Pessoa } from "../pessoa/pessoa.models";
+
+export class Professor extends Pessoa{
     titulacao: String;
 }
 

@@ -3,7 +3,7 @@
   <thf-stepper [t-step]="step" [t-steps]="steps" (t-change-step)="changeStep($event)">
   </thf-stepper>
 
-  <thf-widget class="thf-md-12" t-height="380" [t-primary-label]="labelWidget" t-title="Purchase"
+  <thf-widget class="thf-md-12" t-height="380" [t-primary-label]="labelWidget" t-title="Cadastro Turma"
     (t-primary-action)="onConfirmStep(step + 1)">
 
     <!-- Último step - 01 -->
@@ -11,20 +11,18 @@
       <form [formGroup]="turmaForm">
         <div class="thf-row">
           <thf-input class="thf-md-12" formControlName="descricao" t-clean t-icon="thf-icon thf-icon-edit"
-            t-label="Descrição">
+            t-label="Descrição" t-required>
           </thf-input>
         </div>
         <div class="thf-row">
-          <thf-multiselect name="periodoLetivo" formControlName="periodoLetivo" class="thf-lg-12"
-            t-label="Período Letivo" [t-options]="options">
-          </thf-multiselect>
+          <thf-select name="periodoLetivo" formControlName="periodoLetivo" class="thf-lg-12" t-label="Período Letivo"
+            [t-options]="options" t-required>
+          </thf-select>
         </div>
         <div class="thf-row">
-
-          <thf-input name="bla" class="thf-lg-6" formControlName="anoLetivo" t-clean t-label="Ano Letivo">
+          <thf-input name="bla" class="thf-lg-6" formControlName="anoLetivo" t-clean t-label="Ano Letivo" t-required>
           </thf-input>
-
-          <thf-number class="thf-lg-6" formControlName="numeroVagas" t-label="Número Vagas" t-clean>
+          <thf-number class="thf-lg-6" formControlName="numeroVagas" t-label="Número Vagas" t-clean t-required>
           </thf-number>
         </div>
 
@@ -33,22 +31,50 @@
     <!-- Último step - 02 -->
 
     <ng-container *ngIf="step === 2">
-       <p> teste 2</p>
-    
+      <div class="thf-row">
+        <thf-multiselect class="thf-md-10" name="alunos" t-label="Alunos" [t-options]="options" t-required>
+        </thf-multiselect>
+
+
+        <thf-button class="thf-sm-4 thf-md-2 thf-mt-4" t-label="Adicionar Aluno"
+          (t-click)="modal.open() && createAlunoForm()">
+        </thf-button>
+
+        <thf-modal #modal t-title="Totvs Modal" [t-primary-action]="confirm" [t-secondary-action]="close">
+          <form [formGroup]="alunoForm">
+            <div class="thf-row">
+              <thf-input class="thf-md-12" formControlName="nome" t-clean t-icon="thf-icon thf-icon-user"
+                t-label="Nome Completo" t-required>
+              </thf-input>
+            </div>
+            <div class="thf-row">
+              <thf-email class="thf-md-12" formControlName="email" t-clean t-label="Email" t-required>
+              </thf-email>
+              <thf-input class="thf-md-12" formControlName="cpf" t-clean t-label="CPF" t-required>
+              </thf-input>
+              <thf-input class="thf-md-12" formControlName="matricula" t-clean t-label="Matrícula" t-required>
+              </thf-input>
+              <thf-select class="thf-md-12" formControlName="formaIngresso" t-clean t-label="Forma Ingresso"
+                [t-options]="formaIngressoOptions" t-required>
+              </thf-select>
+            </div>
+
+          </form>
+        </thf-modal>
+        <thf-table class="thf-md-12" [t-items]="[{ teste: 'Totvs Table' }]">
+        </thf-table>
+      </div>
     </ng-container>
-   <!-- Último step - 03 -->
+    <!-- Último step - 03 -->
 
     <ng-container *ngIf="step === 3">
       <p> teste 3</p>
-   
-   </ng-container>
-   <!-- Último step - 04 -->
-   <ng-container *ngIf="step === 4">
-    <p> teste 4</p>
- 
- </ng-container>
 
-
+    </ng-container>
+    <!-- Último step - 04 -->
+    <ng-container *ngIf="step === 4">
+      <p> teste 4</p>
+    </ng-container>
   </thf-widget>
 
 </thf-page-edit>
