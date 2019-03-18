@@ -1,11 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
 
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ThfModalAction, ThfModalComponent, ThfStepperItem, ThfStepperStatus, ThfRadioGroupOption, ThfCheckboxGroupOption, ThfSelectOption } from '@totvs/thf-ui';
+import { ThfModalAction, ThfModalComponent, ThfStepperItem, ThfStepperStatus, ThfRadioGroupOption, ThfCheckboxGroupOption, ThfSelectOption, ThfNotificationService } from '@totvs/thf-ui';
 import { Turma } from '../turma.model';
 import { Aluno, FormaIngresso } from 'src/app/alunos/aluno.model';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 const API_URL = 'http://localhost:3000';
 
@@ -23,15 +24,25 @@ export class TurmaFormComponent {
 
   turmaForm: FormGroup;
   alunoForm: FormGroup;
-  disciplina: FormGroup;
+  disciplinaForm: FormGroup;
   // alunos: Array<ThfSelectOption> = [];
   step: number;
 
   @ViewChild(ThfModalComponent) thfModal: ThfModalComponent;
+  cargaHoraria: any;
+  matricula: any;
+  descricao: any;
+  dadosFinais: Array<String> = []
+  error: string;
+  sucess: string;
 
-  constructor(private formBuilder: FormBuilder, public httpClient: HttpClient) {
+  constructor(private formBuilder: FormBuilder,
+     public httpClient: HttpClient,
+      private router: Router,
+      private thfNotification: ThfNotificationService) {
     this.createTurmaForm(new Turma());
     this.createAlunoForm();
+    this.createDisciplinaForm();
     this.changeStep(1);
 
     //  this.alunosSub = this.httpClient.get(API_URL+"/alunos/list")
@@ -60,7 +71,6 @@ export class TurmaFormComponent {
       ])],
     });
   }
-
   createAlunoForm() { 
     console.log("Create Aluno Form");
     this.alunoForm = this.formBuilder.group({
@@ -85,7 +95,7 @@ export class TurmaFormComponent {
     });
   }
   createDisciplinaForm() {
-    this.alunoForm = this.formBuilder.group({
+    this.disciplinaForm = this.formBuilder.group({
       descricao: ['', Validators.compose([
         Validators.required,
         Validators.minLength(10),
@@ -119,7 +129,6 @@ export class TurmaFormComponent {
     { label: 'Informações Básicas' },
     { label: 'Adicionar Alunos' },
     { label: 'Adicionar Disciplinas' },
-    { label: 'Confirmar Dados' },
   ];
   public options: Array<ThfSelectOption> = [
     { value:'1', label: 'Matutino'  },
@@ -139,7 +148,7 @@ export class TurmaFormComponent {
     if (steps) {
       steps.status = ThfStepperStatus.Done;
     }
-    if (stepNumber === 1 || stepNumber === 2 || stepNumber === 3) {
+    if (stepNumber === 1 || stepNumber === 2) {
       this.labelWidget = 'Próximo';
     }
     else {
@@ -148,13 +157,41 @@ export class TurmaFormComponent {
   }
 
   onConfirmStep(stepNumber: number) {
-    if (stepNumber >= 5) {
+    if (stepNumber >= 4) {
       this.submit();
+      this.router.navigate(['']);
+      this.thfNotification.success(`Turma adicionada com sucesso!`);
+
+      // this.thfNotification.error(`Please fill in the required fields`);
     }
     this.changeStep(stepNumber);
   }
 
   submit() {
-    console.log(this.turmaForm.value);
+    //submetendo a turma e seus dados complementares
+    const descricao = this.turmaForm.get('descricao').value;
+    const anoLetivo = this.turmaForm.get('anoLetivo').value;
+    const periodoLetivo = this.turmaForm.get('periodoLetivo').value;
+    const numeroVagas = this.turmaForm.get('numeroVagas').value;
+
+    let data: String;
+
+    this.httpClient.post(API_URL+"/turma/adicionar", data).subscribe( () => {
+      if (this.fromUrl) {
+        console.log("Deu boa");
+      } else {
+          this.router.navigate(['']);
+      }
+  },
+  err => {
+      console.log(err);
+      alert('Invalid user name or password');
+  })
+
+
   }
+  fromUrl(fromUrl: any): any {
+    throw new Error("Method not implemented.");
+  }
+
 }

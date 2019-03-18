@@ -32,12 +32,12 @@
 
     <ng-container *ngIf="step === 2">
       <div class="thf-row">
-        <thf-multiselect class="thf-md-10" name="alunos" t-label="Alunos" [t-options]="options" t-required>
+        <thf-multiselect class="thf-md-8" name="alunos" t-label="Alunos" [t-options]="alunos" t-required>
         </thf-multiselect>
 
 
-        <thf-button class="thf-sm-4 thf-md-2 thf-mt-4" t-label="Adicionar Aluno"
-          (t-click)="modal.open() && createAlunoForm()">
+        <thf-button class="thf-sm-4 thf-md-4 thf-mt-4" t-label="Adicionar Aluno"
+          (t-click)="modal.open() && createAlunoForm()" t-tooltip="Cadastrar novo aluno no sistema">
         </thf-button>
 
         <thf-modal #modal t-title="Totvs Modal" [t-primary-action]="confirm" [t-secondary-action]="close">
@@ -68,13 +68,32 @@
     <!-- Último step - 03 -->
 
     <ng-container *ngIf="step === 3">
-      <p> teste 3</p>
+      <thf-multiselect class="thf-md-8" name="disciplinas" t-label="Disciplinas" [t-options]="disciplinas" t-required>
+      </thf-multiselect>
 
+      <thf-button class="thf-sm-4 thf-md-4 thf-mt-4" t-label="Adicionar Disciplina" (t-click)="modal.open()" t-tooltip="Cadastrar nova disciplina no sistema.">
+      </thf-button>
+
+      <thf-modal #modal t-title="Totvs Modal" [t-primary-action]="confirm" [t-secondary-action]="close">
+
+        <form [formGroup]="disciplinaForm">
+          <div class="thf-row">
+            <thf-input class="thf-md-12" formControlName="descricao" t-clean t-icon="thf-icon thf-icon-edit"
+              t-label="Descrição" t-required>
+            </thf-input>
+          </div>
+          <div class="thf-row">
+            <thf-input class="thf-md-6" formControlName="sigla" t-clean t-label="Sigla" t-required>
+            </thf-input>
+            <thf-number class="thf-lg-6" formControlName="cargaHoraria" t-label="Carga Horária" t-clean t-required>
+            </thf-number>
+          </div>
+        </form>
+      </thf-modal>
+      <thf-table class="thf-md-12" [t-items]="[{ teste: 'Totvs Table' }]">
+      </thf-table>
     </ng-container>
-    <!-- Último step - 04 -->
-    <ng-container *ngIf="step === 4">
-      <p> teste 4</p>
-    </ng-container>
+    
   </thf-widget>
 
 </thf-page-edit>
