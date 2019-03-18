@@ -6,8 +6,9 @@
   <thf-widget class="thf-md-12" t-height="380" [t-primary-label]="labelWidget" t-title="Purchase"
     (t-primary-action)="onConfirmStep(step + 1)">
 
+    <!-- Último step - 01 -->
     <ng-container *ngIf="step === 1">
-      <form [formGroup]="reactiveForm">
+      <form [formGroup]="turmaForm">
         <div class="thf-row">
           <thf-input class="thf-md-12" formControlName="descricao" t-clean t-icon="thf-icon thf-icon-edit"
             t-label="Descrição">
@@ -18,7 +19,6 @@
             t-label="Período Letivo" [t-options]="options">
           </thf-multiselect>
         </div>
-
         <div class="thf-row">
 
           <thf-input name="bla" class="thf-lg-6" formControlName="anoLetivo" t-clean t-label="Ano Letivo">
@@ -30,19 +30,25 @@
 
       </form>
     </ng-container>
+    <!-- Último step - 02 -->
+
     <ng-container *ngIf="step === 2">
-      <form [formGroup]="alunosForm">
-        <div class="thf-row">
-          <thf-number class="thf-lg-6" formControlName="matricula" t-label="Matrícula" t-clean>
-          </thf-number>
-        </div>
-        <div class="thf-row">
-          <thf-multiselect name="formaIngresso" formControlName="formaIngresso" class="thf-lg-12"
-            t-label="Forma Ingresso" [t-options]="options">
-          </thf-multiselect>
-        </div>
-      </form>
+       <p> teste 2</p>
+    
     </ng-container>
+   <!-- Último step - 03 -->
+
+    <ng-container *ngIf="step === 3">
+      <p> teste 3</p>
+   
+   </ng-container>
+   <!-- Último step - 04 -->
+   <ng-container *ngIf="step === 4">
+    <p> teste 4</p>
+ 
+ </ng-container>
+
+
   </thf-widget>
 
 </thf-page-edit>

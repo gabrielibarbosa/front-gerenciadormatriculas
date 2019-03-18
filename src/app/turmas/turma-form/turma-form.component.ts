@@ -3,6 +3,7 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ThfModalAction, ThfModalComponent, ThfStepperItem, ThfStepperStatus, ThfRadioGroupOption, ThfCheckboxGroupOption, ThfSelectOption } from '@totvs/thf-ui';
 import { Turma } from '../turma.model';
+import { Aluno } from 'src/app/alunos/aluno.model';
 
 const API_URL = 'http://localhost:3000';
 
@@ -11,18 +12,14 @@ const API_URL = 'http://localhost:3000';
   templateUrl: './turma-form.component.html',
   styleUrls: ['./turma-form.component.css']
 })
-export class TurmaFormComponent implements OnInit{
- 
+export class TurmaFormComponent {
+
   labelWidget: string;
   @ViewChild('sucessData') sucessData: ThfModalComponent;
 
 
-  ngOnInit(): void {
-    this.changeStep(1);
-  }
-
-  reactiveForm: FormGroup;
- // testeForm: FormGroup;
+  turmaForm: FormGroup;
+  alunoForm: FormGroup;
 
   step: number;
 
@@ -31,11 +28,13 @@ export class TurmaFormComponent implements OnInit{
 
 
   constructor(private formBuilder: FormBuilder) {
-    this.createReactiveForm(new Turma());
+    this.createTurmaForm(new Turma());
+    this.changeStep(1);
+
   }
 
-  createReactiveForm(turma: Turma) {
-    this.reactiveForm = this.formBuilder.group({
+  createTurmaForm(turma: Turma) {
+    this.turmaForm = this.formBuilder.group({
       descricao: [turma.descricao],
       anoLetivo: [turma.anoLetivo],
       periodoLetivo: [turma.periodoLetivo],
@@ -43,14 +42,15 @@ export class TurmaFormComponent implements OnInit{
     });
   }
 
-    alunoForm(turma: Turma) {
-    this.reactiveForm = this.formBuilder.group({
-      matricula: [turma.descricao],
-      anoLetivo: [turma.anoLetivo]
+  createAlunoForm(aluno: Aluno) {
+    this.alunoForm = this.formBuilder.group({
+      matricula: [aluno.matricula],
+      formaIngreso: [aluno.formaIngreso]
+      
     });
   }
 
-  public steps: Array<ThfStepperItem>  = [
+  public steps: Array<ThfStepperItem> = [
     { label: 'Informações Básicas' },
     { label: 'Adicionar Alunos' },
     { label: 'Adicionar Disciplinas' },
@@ -58,33 +58,26 @@ export class TurmaFormComponent implements OnInit{
   ];
 
   changeStep(stepNumber: number) {
-    const steps =  this.steps[this.step - 1];
-
+    const steps = this.steps[this.step - 1];
     this.step = stepNumber;
     if (steps) {
       steps.status = ThfStepperStatus.Done;
     }
-
-    const numSteps = stepNumber + 1;
-  
-      if ( numSteps === 1 ||  numSteps === 2 ||  numSteps === 3) {
-        console.log( numSteps);
-  
-        this.labelWidget = 'Próximo';
-      } else {
-        this.labelWidget = 'Confirmar';
-        console.log(numSteps);
-      }
+    if (stepNumber === 1 || stepNumber === 2 || stepNumber === 3) {
+      this.labelWidget = 'Next Step';
+    } else {
+      this.labelWidget = 'Confirm Purchase';
+    }
   }
 
   onConfirmStep(stepNumber: number) {
     if (stepNumber >= 5) {
-      this.sucessData.open();
+      this.submit();
     }
     this.changeStep(stepNumber);
   }
 
   submit() {
-    console.log(this.reactiveForm.value);
+    console.log(this.turmaForm.value);
   }
 }
