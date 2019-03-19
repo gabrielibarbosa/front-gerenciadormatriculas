@@ -25,7 +25,7 @@ export class AppComponent {
       ]
     },
     {
-      label: 'Alunos', link: '/professores',
+      label: 'Alunos', link: '/alunos',
       subItems: [
         { label: 'Listar Alunos', link: '/alunos' },
         //{ label: 'Adicionar Aluno', link: '/alunos/adicionar' },
