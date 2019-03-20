@@ -1,14 +1,4 @@
-<thf-page-list
-  t-title="Professores">
-<thf-list-view class="thf-md-12"
-  t-property-title="name"
-  [t-items]="[{ name: 'Professor 1', email: 'register@totvs.com' }, { name: 'Professor 2', email: 'register2@totvs.com' }]">
-
-  <ng-template t-list-view-content-template let-item>
-    <div class="thf-row">
-      <thf-info class="thf-md-6" t-label="Email" [t-value]="item.email"></thf-info>
-    </div>
-  </ng-template>
-
-</thf-list-view>
+<thf-page-list t-title="Professores">
+  <thf-table [t-items]="professores">
+  </thf-table>
 </thf-page-list>
