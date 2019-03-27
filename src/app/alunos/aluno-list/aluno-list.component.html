@@ -1,5 +1,13 @@
-<thf-page-list
-  t-title="Alunos">
-  <thf-table [t-items]="alunos">
-  </thf-table>
+<thf-page-list t-title="Alunos">
+    <div class="thf-row">
+  <thf-list-view class="thf-md-6" t-property-title="nome" [t-items]="alunos">
+
+    <ng-template t-list-view-content-template let-item>
+      <div class="thf-row">
+        <thf-info class="thf-md-12" t-label="Email:" [t-value]="item.email"></thf-info>
+        <thf-info class="thf-md-12"  t-label="Matricula:" [t-value]="item.matricula"></thf-info>
+      </div>
+    </ng-template>
+  </thf-list-view>
+</div>
 </thf-page-list>
