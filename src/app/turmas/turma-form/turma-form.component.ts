@@ -7,8 +7,6 @@ import { Aluno, FormaIngresso } from 'src/app/alunos/aluno.model';
 import { Subscription, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { map, catchError, tap } from 'rxjs/operators';
-
 
 const API_URL = 'http://localhost:3000';
 
@@ -19,72 +17,77 @@ const API_URL = 'http://localhost:3000';
 })
 
 export class TurmaFormComponent implements OnInit {
-  professorSub: Subscription;
-  disciplinasSub: Subscription;
+  
   ngOnInit(): void {
-
-    this.alunosSub = this.httpClient.get(API_URL + "/alunos/listar").subscribe((response: any) => {
-      console.log("To aqui" + response);
-      this.alunos = response;
-    });
-
+    this.alunosList();
     this.disciplinasList();
-
   }
 
-  disciplinasList() {
-    this.disciplinasSub = this.httpClient.get(API_URL + "/disciplinas/listar").subscribe((response: any) => {
-      console.log("Disciplinas" + response);
-      this.disciplinas = response;
-    });
-  }
-
-
-  labelWidget: string;
   @ViewChild('sucessData') sucessData: ThfModalComponent;
 
   private alunosSub: Subscription;
+  private professorSub: Subscription;
+  private disciplinasSub: Subscription;
 
   formTurma: FormGroup;
   formAluno: FormGroup;
   formDisciplina: FormGroup;
+  labelWidget: string;
 
   disciplina: any = {};
   turma: any = {};
   aluno: any = {};
-
   step: number;
-  @ViewChild(ThfTableComponent) thfTable: ThfTableComponent;
-
-  @ViewChild(ThfModalComponent) thfModal: ThfModalComponent;
-  cargaHoraria: any;
-  matricula: any;
-  descricao: any;
   dadosFinais: Array<String> = []
   error: string;
   sucess: string;
   alunos: Array<String> = [];
   total: number = 0;
-  teste = this.alunosSub;
   disciplinas: Array<String> = [];
+
+  @ViewChild(ThfTableComponent) thfTable: ThfTableComponent;
+  @ViewChild(ThfModalComponent) thfModal: ThfModalComponent;
+
+
   constructor(private formBuilder: FormBuilder,
     public httpClient: HttpClient,
     private router: Router,
     private thfNotification: ThfNotificationService) {
     this.changeStep(1);
+    this.alunos;
   }
 
+  public steps: Array<ThfStepperItem> = [
+    { label: 'Informações Básicas' },
+    { label: 'Adicionar Alunos' },
+    { label: 'Adicionar Disciplinas' },
+  ];
+  public options: Array<ThfSelectOption> = [
+    { value: '1', label: '1' },
+    { value: '2', label: '2' },
+    { value: '3', label: '3' },
+    { value: '4', label: '4' },
+    { value: '5', label: '5' },
+    { value: '6', label: '6' },
 
-  addToCart() {
-    const selectedItems = this.thfTable.getSelectedRows();
-    console.log(selectedItems);
-    //criar código pra subir os alunos
+  ];
+
+  public formaIngressoOptions: Array<ThfSelectOption> = [
+    { value: FormaIngresso.ENEM, label: 'Enem' },
+    { value: FormaIngresso.VESTIBULAR, label: 'Vestibular' },
+    { value: FormaIngresso.TRANSFERENCIA, label: 'Transferência' },
+  ];
+
+  alunosList(){
+    this.alunosSub = this.httpClient.get(API_URL + "/alunos/listar").subscribe((response: any) => {
+      this.alunos = response;
+    });
   }
 
-  addToCart2() {
-    const selectedItems = this.thfTable.getSelectedRows();
-    console.log(selectedItems);
-    //criar código pra subir os alunos
+  disciplinasList() {
+    this.disciplinasSub = this.httpClient.get(API_URL + "/disciplinas/listar").subscribe((response: any) => {
+      this.disciplinas = response;
+    });
   }
 
   close: ThfModalAction = {
@@ -94,31 +97,29 @@ export class TurmaFormComponent implements OnInit {
     label: 'Cancelar'
   };
 
-  public readonly columns: Array<ThfTableColumn> = [
-    // Definição das colunas
-  ];
+  confirm: ThfModalAction = {
+    action: () => {
+     this.cadastrarDisciplinas(this.disciplina);
+     this.thfModal.close();
+     this.disciplinasList();
+    },
+    label: 'Confirmar'
+  };
 
-  public steps: Array<ThfStepperItem> = [
-    { label: 'Informações Básicas' },
-    { label: 'Adicionar Alunos' },
-    { label: 'Adicionar Disciplinas' },
-  ];
-  public options: Array<ThfSelectOption> = [
-    { value: '1', label: 'Matutino' },
-    { value: '2', label: 'Vespertino' },
-    { value: '3', label: 'Noturno' },
-  ];
+  closeAluno: ThfModalAction = {
+    action: () => {
+      this.thfModal.close();
+    },
+    label: 'Cancelar'
+  };
 
-  public formaIngressoOptions: Array<ThfSelectOption> = [
-    { value: FormaIngresso.ENEM, label: 'Enem' },
-    { value: FormaIngresso.VESTIBULAR, label: 'Vestibular' },
-    { value: FormaIngresso.TRANSFERENCIA, label: 'Transferência' },
-  ];
-
-
-  public alunosOptions: Array<ThfMultiselectOption> = [
-
-  ];
+  confirmAluno: ThfModalAction = {
+    action: () => {
+     this.cadastrarAlunos(this.aluno);
+     this.thfModal.close();
+    },
+    label: 'Confirmar'
+  };
 
   changeStep(stepNumber: number) {
     const steps = this.steps[this.step - 1];
@@ -149,15 +150,41 @@ export class TurmaFormComponent implements OnInit {
   }
 
   public add(turma) {
-    console.log("oi eu to aqui");
-    console.log(JSON.stringify(turma));
-    let data = {
-      'turma': turma
-    }
+      this.httpClient.post(API_URL + "/turmas/", turma).subscribe((res) => {
+        console.log("teste" + res)
+      });
+  }
 
-    this.httpClient.post(API_URL + "/turmas/add/", data, { responseType: 'text' }).subscribe((res) => {
-      console.log("teste" + res)
+  cadastrarAlunos(data){
+    this.httpClient.post(API_URL + "/alunos", data).subscribe((res) => {
+      console.log("teste alunos" + res);
+      this.thfNotification.success(`Aluno adicionado com sucesso!`);
     });
+  }
+
+  cadastrarDisciplinas(data){
+    this.httpClient.post(API_URL + "/disciplinas/", data).subscribe((res) => {
+      console.log("teste disciplinas" + res);
+      this.thfNotification.success(`Disciplina adicionada com sucesso!`);
+
+    });
+  }
+
+  addToCart() {
+    const selectedItems = this.thfTable.getSelectedRows();
+    console.log(selectedItems);
+    //criar código pra subir os alunos
+    this.cadastrarAlunos(selectedItems);
+  
+  }
+
+  addToCart2() {
+    const selectedItems = this.thfTable.getSelectedRows();
+    console.log(selectedItems);
+    //criar código pra subir os alunos
+    this.cadastrarDisciplinas(selectedItems);
 
   }
+
+
 }
