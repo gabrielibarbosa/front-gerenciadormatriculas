@@ -41,10 +41,19 @@
             t-tooltip="Adicionar alunos selecionados." t-label="Adicionar alunos" (t-click)="addToCart()">
           </thf-button>
         </div>
+
         <div class="thf-row">
-          <thf-table class="thf-md-12" [t-items]="alunos" t-checkbox>
+          <thf-table class="thf-md-12" 
+                  [t-items]="alunos" 
+                  t-checkbox
+                  t-hide-select-all="true"
+                  (t-selected)="selecionarAluno($event)"
+                  (t-unselected)="deselecionarAluno($event)">
+                  >
           </thf-table>
         </div>
+
+
       </div>
       <thf-modal #modal t-title="Cadastrar Aluno" [t-primary-action]="confirmAluno" [t-secondary-action]="closeAluno">
         <form #formAluno="ngForm">

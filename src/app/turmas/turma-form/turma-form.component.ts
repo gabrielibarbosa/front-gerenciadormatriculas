@@ -42,6 +42,10 @@ export class TurmaFormComponent implements OnInit {
   sucess: string;
   total: number = 0;
 
+  alunoAdicionado: Array<any> = [];
+  disciplinaAdicionada: Array<any> = [];
+
+
   buttonWidget: string;
 
   constructor(
@@ -161,36 +165,50 @@ export class TurmaFormComponent implements OnInit {
     label: 'Confirmar'
   };
 
-
-
-
+  //Funcoes para cadastrar alunos e disciplinas
   cadastrarAlunos() {
     if (this.alunoForm.invalid) {
 
       this.thfNotification.warning("Dados inválidos, confira se preencheu o formulário corretamente!")
     } else {
-      this.alunoService.postAluno(this.aluno).subscribe((res) => {
+      this.alunoAdicionado.push(this.aluno);
+      this.alunoService.postAluno(this.alunoAdicionado).subscribe((res) => {
         console.log("teste disciplinas" + res);
         this.thfNotification.success(`Disciplina adicionada com sucesso!`);
       });
-
+      this.alunoForm.reset();
+      this.thfModal.close();
     }
   }
 
   cadastrarDisciplinas() {
-    this.disciplinaService.postDisciplina(this.disciplina).subscribe((res) => {
-      console.log("teste disciplinas" + res);
-      this.thfNotification.success(`Disciplina adicionada com sucesso!`);
-    });
-    this.disciplinaForm.reset();
-    this.thfModal.close();
+    if (this.disciplinaForm.invalid) {
+      this.thfNotification.warning("Dados inválidos, confira se preencheu o formulário corretamente!")
+    } else {
+
+      this.disciplinaAdicionada.push(this.disciplina);
+      this.disciplinaService.postDisciplina(this.disciplinaAdicionada).subscribe((res) => {
+        this.thfNotification.success(`Disciplina adicionada com sucesso!`);
+      });
+      this.disciplinaForm.reset();
+      this.thfModal.close();
+    }
+  }
+
+  //Para selecionar alunos
+
+  selecionarAluno(row: any) {
+    if (row.value) {
+      this.alunoAdicionado.concat(row);
+      console.log(this.alunoAdicionado);
+    }
   }
 
   addToCart() {
-    const selectedItems = this.thfTable.getSelectedRows();
-    console.log(selectedItems);
-    //criar código pra subir os alunos
-    this.cadastrarAlunos();
+    this.alunoService.postAluno(this.alunoAdicionado).subscribe((res) => {
+      console.log("teste disciplinas" + res);
+      this.thfNotification.success(`Disciplina adicionada com sucesso!`);
+    });
   }
 
   addToCart2() {
