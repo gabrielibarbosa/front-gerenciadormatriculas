@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { AlunoService } from 'src/app/provider/alunos/aluno.service';
 
 @Component({
   selector: 'app-aluno-list',
@@ -14,19 +15,16 @@ export class AlunoListComponent implements OnInit {
   private alunos: Array<any> = [];
   private turmas: Array<any> = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private alunoService: AlunoService) { }
 
   ngOnInit() {
-     this.alunosSub = this.http.get(this.url).subscribe((response:any)=>{
-      console.log("To aqui"+ response);
-      this.alunos =  response;
-      for(let item of response){
-        let turmas = item.turmas;
-        for(let item of turmas){
-          this.turmas = item;
-        }
-        console.log(this.turmas);
-      }
+     this.alunosList();
+  }
+
+  alunosList(){
+    this.alunoService.getAlunos().subscribe((res)=>{
+      this.alunos =  res;
     });
   }
 }

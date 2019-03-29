@@ -1,12 +1,15 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { ThfModalAction, ThfModalComponent, ThfStepperItem, ThfStepperStatus, ThfRadioGroupOption, ThfCheckboxGroupOption, ThfSelectOption, ThfNotificationService, ThfMultiselectOption, ThfTableColumn, ThfTableComponent } from '@totvs/thf-ui';
-import { Turma } from '../turma.model';
-import { Aluno, FormaIngresso } from 'src/app/alunos/aluno.model';
-import { Subscription, Observable } from 'rxjs';
+import { FormaIngresso, Aluno } from 'src/app/alunos/aluno.model';
+import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AlunoService } from 'src/app/provider/alunos/aluno.service';
+import { DisciplinaService } from 'src/app/provider/disciplinas/disciplina.service';
+import { Disciplina } from 'src/app/disciplinas/disciplina.models';
+import { TurmaService } from 'src/app/provider/turmas/turma.service';
 
 const API_URL = 'http://localhost:3000';
 
@@ -15,24 +18,24 @@ const API_URL = 'http://localhost:3000';
   templateUrl: './turma-form.component.html',
   styleUrls: ['./turma-form.component.css']
 })
-
 export class TurmaFormComponent implements OnInit {
-  
-  ngOnInit(): void {
-    this.alunosList();
-    this.disciplinasList();
-  }
 
   @ViewChild('sucessData') sucessData: ThfModalComponent;
+  @ViewChild(ThfTableComponent) thfTable: ThfTableComponent;
+  @ViewChild(ThfModalComponent) thfModal: ThfModalComponent;
+  @ViewChild('formAluno') alunoForm: NgForm;
+  @ViewChild('formDisciplina') disciplinaForm : NgForm;
 
-  private alunosSub: Subscription;
-  private professorSub: Subscription;
-  private disciplinasSub: Subscription;
 
+  //
   formTurma: FormGroup;
   formAluno: FormGroup;
   formDisciplina: FormGroup;
-  labelWidget: string;
+
+  //Variaveis para listar dados
+  alunos: Array<Aluno> = [];
+  disciplinas: Array<Disciplina> = [];
+
 
   disciplina: any = {};
   turma: any = {};
@@ -41,35 +44,43 @@ export class TurmaFormComponent implements OnInit {
   dadosFinais: Array<String> = []
   error: string;
   sucess: string;
-  alunos: Array<String> = [];
   total: number = 0;
-  disciplinas: Array<String> = [];
 
-  @ViewChild(ThfTableComponent) thfTable: ThfTableComponent;
-  @ViewChild(ThfModalComponent) thfModal: ThfModalComponent;
+  buttonWidget: string;
 
-
-  constructor(private formBuilder: FormBuilder,
+  constructor(
     public httpClient: HttpClient,
     private router: Router,
-    private thfNotification: ThfNotificationService) {
+    private thfNotification: ThfNotificationService,
+    private alunoService: AlunoService,
+    private disciplinaService: DisciplinaService,
+    private turmaService: TurmaService
+  ) {
     this.changeStep(1);
-    this.alunos;
+    this.alunosList();
+    this.disciplinasList();
   }
 
+  ngOnInit(): void {
+    this.alunosList();
+    this.disciplinasList();
+  }
+
+  //Array dos titulos dos steps
   public steps: Array<ThfStepperItem> = [
     { label: 'Informações Básicas' },
     { label: 'Adicionar Alunos' },
     { label: 'Adicionar Disciplinas' },
   ];
-  public options: Array<ThfSelectOption> = [
+
+  //Array itens dos selects
+  public periodoLetivo: Array<ThfSelectOption> = [
     { value: '1', label: '1' },
     { value: '2', label: '2' },
     { value: '3', label: '3' },
     { value: '4', label: '4' },
     { value: '5', label: '5' },
     { value: '6', label: '6' },
-
   ];
 
   public formaIngressoOptions: Array<ThfSelectOption> = [
@@ -78,49 +89,19 @@ export class TurmaFormComponent implements OnInit {
     { value: FormaIngresso.TRANSFERENCIA, label: 'Transferência' },
   ];
 
-  alunosList(){
-    this.alunosSub = this.httpClient.get(API_URL + "/alunos/listar").subscribe((response: any) => {
-      this.alunos = response;
+  //Funções para listar alunos e disciplinas na tela
+  alunosList() {
+    this.alunoService.getAlunos().subscribe((res) => {
+      this.alunos = res;
     });
   }
-
   disciplinasList() {
-    this.disciplinasSub = this.httpClient.get(API_URL + "/disciplinas/listar").subscribe((response: any) => {
-      this.disciplinas = response;
+    this.disciplinaService.getDisciplinas().subscribe((res) => {
+      this.disciplinas = res;
     });
   }
 
-  close: ThfModalAction = {
-    action: () => {
-      this.thfModal.close();
-    },
-    label: 'Cancelar'
-  };
-
-  confirm: ThfModalAction = {
-    action: () => {
-     this.cadastrarDisciplinas(this.disciplina);
-     this.thfModal.close();
-     this.disciplinasList();
-    },
-    label: 'Confirmar'
-  };
-
-  closeAluno: ThfModalAction = {
-    action: () => {
-      this.thfModal.close();
-    },
-    label: 'Cancelar'
-  };
-
-  confirmAluno: ThfModalAction = {
-    action: () => {
-     this.cadastrarAlunos(this.aluno);
-     this.thfModal.close();
-    },
-    label: 'Confirmar'
-  };
-
+  //Funcao para mudar os steps
   changeStep(stepNumber: number) {
     const steps = this.steps[this.step - 1];
     this.step = stepNumber;
@@ -128,61 +109,95 @@ export class TurmaFormComponent implements OnInit {
       steps.status = ThfStepperStatus.Done;
     }
     if (stepNumber === 1 || stepNumber === 2) {
-      this.labelWidget = 'Próximo';
+      this.buttonWidget = 'Próximo';
     }
     else {
-      this.labelWidget = 'Confirmar';
+      this.buttonWidget = 'Confirmar';
     }
   }
 
+  //Funcao de confirmacao do ultimo step
   onConfirmStep(stepNumber: number) {
     if (stepNumber >= 4) {
       this.submit();
-      this.router.navigate(['']);
-      this.thfNotification.success(`Turma adicionada com sucesso!`);
     }
     this.changeStep(stepNumber);
   }
 
   submit() {
-    console.log(this.turma);
-    this.add(this.turma);
-  }
-
-  public add(turma) {
-      this.httpClient.post(API_URL + "/turmas/", turma).subscribe((res) => {
-        console.log("teste" + res)
-      });
-  }
-
-  cadastrarAlunos(data){
-    this.httpClient.post(API_URL + "/alunos", data).subscribe((res) => {
-      console.log("teste alunos" + res);
-      this.thfNotification.success(`Aluno adicionado com sucesso!`);
+    this.turmaService.postAluno(this.turma).subscribe((res)=>{
+        this.thfNotification.success(`Turma adicionada com sucesso!`);
     });
+     this.router.navigate(['']);
+
   }
 
-  cadastrarDisciplinas(data){
-    this.httpClient.post(API_URL + "/disciplinas/", data).subscribe((res) => {
-      console.log("teste disciplinas" + res);
-      this.thfNotification.success(`Disciplina adicionada com sucesso!`);
+  //Acoes para abrir e fechar modal de Aluno e Disciplina 
+  closeDisciplina: ThfModalAction = {
+    action: () => {
+      this.disciplinaForm.reset();
+      this.thfModal.close();
+    },
+    label: 'Cancelar',
+    danger: true
+  };
 
-    });
+  confirmDisciplina: ThfModalAction = {
+    action: () => {
+      this.cadastrarDisciplinas();
+    },
+    label: 'Confirmar'
+  };
+
+  closeAluno: ThfModalAction = {
+    action: () => {
+      this.alunoForm.reset();
+      this.thfModal.close();
+    },
+    label: 'Cancelar',
+    danger: true
+  };
+
+  confirmAluno: ThfModalAction = {
+    action: () => {
+      this.cadastrarAlunos();
+    },
+    label: 'Confirmar'
+  };
+
+
+  
+
+  cadastrarAlunos() {
+    if(this.alunoForm.invalid){
+
+      this.thfNotification.warning("Dados inválidos, confira se preencheu o formulário corretamente!")
+    }else{
+      this.thfNotification.success("Deu boa");
+    }
+  }
+
+  cadastrarDisciplinas() {
+    if(this.disciplinaForm.invalid){
+      this.thfNotification.warning("Dados inválidos, confira se preencheu o formulário corretamente!")
+    }else{
+      this.thfNotification.success("Deu boa");
+    }
   }
 
   addToCart() {
     const selectedItems = this.thfTable.getSelectedRows();
     console.log(selectedItems);
     //criar código pra subir os alunos
-    this.cadastrarAlunos(selectedItems);
-  
+    this.cadastrarAlunos();
+
   }
 
   addToCart2() {
     const selectedItems = this.thfTable.getSelectedRows();
     console.log(selectedItems);
     //criar código pra subir os alunos
-    this.cadastrarDisciplinas(selectedItems);
+    this.cadastrarDisciplinas();
 
   }
 

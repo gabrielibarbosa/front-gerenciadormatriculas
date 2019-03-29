@@ -3,10 +3,12 @@
   <thf-stepper [t-step]="step" [t-steps]="steps" (t-change-step)="changeStep($event)">
   </thf-stepper>
 
-  <thf-widget class="thf-md-12" [t-primary-label]="labelWidget" (t-primary-action)="onConfirmStep(step + 1)">
+  <thf-widget class="thf-md-12" t-height="400" [t-primary-label]="buttonWidget"
+    (t-primary-action)="onConfirmStep(step + 1)">
 
     <!-- Último step - 01 -->
     <ng-container *ngIf="step === 1">
+      <thf-divider class="thf-md-12" t-label="Informações Básicas"></thf-divider>
       <form #formTurma="ngForm">
         <div class="thf-row">
           <thf-input class="thf-md-12" name="descricao" [(ngModel)]="turma.descricao" t-clean
@@ -15,7 +17,7 @@
         </div>
         <div class="thf-row">
           <thf-select name="periodoLetivo" [(ngModel)]="turma.periodoLetivo" class="thf-lg-12" t-label="Período Letivo"
-            [t-options]="options" t-required>
+            [t-options]="periodoLetivo" t-required>
           </thf-select>
           <thf-input name="anoLetivo" class="thf-lg-6" [(ngModel)]="turma.anoLetivo" t-clean t-label="Ano Letivo"
             t-required>
@@ -26,19 +28,20 @@
         </div>
       </form>
     </ng-container>
-    <!-- Último step - 02 -->
 
+    <!-- Último step - 02 -->
     <ng-container *ngIf="step === 2">
       <div class="thf-row">
-        <thf-button class="thf-sm-3 thf-md-3 thf-mt-3" t-icon="thf-icon thf-icon-plus" t-label="Cadastrar Aluno"
-          (t-click)="modal.open() && createAlunoForm()" t-tooltip="Cadastrar novo aluno no sistema">
-        </thf-button>
-        <thf-button class="thf-sm-3 thf-md-4 thf-mt-3" t-icon="thf-icon thf-icon-ok" t-label="Adicionar alunos"
-          (t-click)="addToCart()">
-        </thf-button>
         <div class="thf-row">
-            <thf-divider></thf-divider>
-
+          <thf-divider class="thf-md-6" t-label="Adicionar Alunos"></thf-divider>
+          <thf-button class="thf-sm-3 thf-md-3 thf-mt-3" t-icon="thf-icon thf-icon-plus" t-label="Cadastrar Aluno"
+            (t-click)="modal.open() && createAlunoForm()" t-tooltip="Cadastrar novo aluno.">
+          </thf-button>
+          <thf-button class="thf-sm-3 thf-md-3 thf-mt-3" t-icon="thf-icon thf-icon-ok"
+            t-tooltip="Adicionar alunos selecionados." t-label="Adicionar alunos" (t-click)="addToCart()">
+          </thf-button>
+        </div>
+        <div class="thf-row">
           <thf-table class="thf-md-12" [t-items]="alunos" t-checkbox>
           </thf-table>
         </div>
@@ -70,19 +73,25 @@
     <!-- Último step - 03 -->
     <ng-container *ngIf="step === 3">
       <div class="thf-row">
-        <thf-button  class="thf-sm-3 thf-md-3 thf-mt-3 teste" t-icon="thf-icon thf-icon-plus" t-label="Cadastrar Disciplina"
-          (t-click)="modal.open() && createDisciplinaForm()" t-tooltip="Cadastrar nova disciplina no sistema">
-        </thf-button>
-        <thf-button class="thf-sm-3 thf-md-4 thf-mt-3 teste" t-icon="thf-icon thf-icon-ok" t-label="Adicionar Disciplina"
-          (t-click)="addToCart()">
-        </thf-button>
-        <thf-divider class="thf-md-12"></thf-divider>
+        <div class="thf-row">
 
-        <thf-table class="thf-md-12" [t-items]="disciplinas" t-checkbox>
+          <thf-divider class="thf-md-6" t-label="Disciplinas"></thf-divider>
+          <thf-button class="thf-sm-3 thf-md-3 thf-mt-3 teste" t-icon="thf-icon thf-icon-plus"
+            t-label="Cadastrar Disciplina" (t-click)="modal.open() && createDisciplinaForm()"
+            t-tooltip="Cadastrar nova disciplina.">
+          </thf-button>
+          <thf-button class="thf-sm-3 thf-md-3 thf-mt-3 teste" t-tooltip="Adicionar disciplinas selecionadas."
+            t-icon="thf-icon thf-icon-ok" t-label="Adicionar Disciplina" (t-click)="addToCart()">
+          </thf-button>
+        </div>
+        <div class="thf-row">
+
+          <thf-table class="thf-md-12" [t-items]="disciplinas" t-checkbox>
           </thf-table>
+        </div>
       </div>
 
-      <thf-modal #modal t-title="Cadastrar Disciplina" [t-primary-action]="confirm" [t-secondary-action]="close">
+      <thf-modal #modal t-title="Cadastrar Disciplina" [t-primary-action]="confirmDisciplina" [t-secondary-action]="closeDisciplina">
         <form #formDisciplina="ngForm">
           <div class="thf-row">
             <thf-input class="thf-md-12" name="descricao" [(ngModel)]="disciplina.descricao" t-clean
