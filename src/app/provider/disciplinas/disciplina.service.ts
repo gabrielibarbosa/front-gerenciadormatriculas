@@ -21,4 +21,20 @@ export class DisciplinaService {
         })
       );
   }
+
+  postDisciplina(data): Observable<Disciplina> {
+    console.log("Data"+data);
+    return this.httpClient.post<Disciplina>(API_URL+"/disciplinas/", data)
+      .pipe(
+        tap((disciplina) => console.log("Disciplina adicionada com sucesso"+disciplina)),
+        catchError(this.handleError<Disciplina>('addDisciplina'))
+      );
+  }
+
+  private handleError<T> (operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      return error;
+    };
+  }
 }
