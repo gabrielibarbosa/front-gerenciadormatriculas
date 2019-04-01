@@ -22,8 +22,16 @@ export class DisciplinaService {
       );
   }
 
-  postDisciplina(data): Observable<Disciplina> {
-    console.log("Data"+data);
+  postDisciplina(disciplina, professor): Observable<Disciplina> {
+    let data={
+      'id': null,
+      'descricao':disciplina.descricao,
+      'sigla': disciplina.sigla,
+      'cargaHoraria': disciplina.cargaHoraria,
+      'turmas': null,
+        'professor': professor
+    }
+     console.log(data);
     return this.httpClient.post<Disciplina>(API_URL+"/disciplinas/", data)
       .pipe(
         tap((disciplina) => console.log("Disciplina adicionada com sucesso"+disciplina)),

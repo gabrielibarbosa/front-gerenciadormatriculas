@@ -52,6 +52,7 @@ export class TurmaFormComponent implements OnInit {
   professor: ThfSelectOption;
   professoresOptions: Array<ThfSelectOption>= [];
   professores: import("c:/Users/gabrieli.barbosa/Documents/Projeto Final Back e Front/Frontend/gerenciadormatriculas/src/app/professores/professor.models").Professor[];
+  professorAdicionado: import("c:/Users/gabrieli.barbosa/Documents/Projeto Final Back e Front/Frontend/gerenciadormatriculas/src/app/professores/professor.models").Professor;
 
   constructor(
     public httpClient: HttpClient,
@@ -197,14 +198,13 @@ export class TurmaFormComponent implements OnInit {
 
       this.professores.forEach(item => {
         if(item.id == this.professorOption.id){
-          let professor = item;
-          this.disciplina.professor = professor;
+          this.professorAdicionado = item;
         }
       });
       console.log(this.disciplina);
       this.disciplinaAdicionada.push(this.disciplina);
-
-      this.disciplinaService.postDisciplina(this.disciplinaAdicionada).subscribe((res) => {
+      console.log(this.disciplinaAdicionada)
+      this.disciplinaService.postDisciplina(this.disciplina, this.professorAdicionado).subscribe((res) => {
         this.thfNotification.success(`Disciplina adicionada com sucesso!`);
       });
       this.disciplinaForm.reset();
