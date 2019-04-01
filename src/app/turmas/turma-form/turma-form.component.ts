@@ -9,6 +9,7 @@ import { AlunoService } from 'src/app/provider/alunos/aluno.service';
 import { DisciplinaService } from 'src/app/provider/disciplinas/disciplina.service';
 import { Disciplina } from 'src/app/disciplinas/disciplina.models';
 import { TurmaService } from 'src/app/provider/turmas/turma.service';
+import { ProfessorService } from 'src/app/provider/professores/professor.service';
 
 @Component({
   selector: 'app-turma-form',
@@ -36,6 +37,7 @@ export class TurmaFormComponent implements OnInit {
   disciplina: any = {};
   turma: any = {};
   aluno: any = {};
+  professorOption: any = {};
   step: number;
   dadosFinais: Array<String> = []
   error: string;
@@ -47,17 +49,23 @@ export class TurmaFormComponent implements OnInit {
 
   buttonWidget: string;
 
+  professor: ThfSelectOption;
+  professoresOptions: Array<ThfSelectOption>= [];
+  professores: import("c:/Users/gabrieli.barbosa/Documents/Projeto Final Back e Front/Frontend/gerenciadormatriculas/src/app/professores/professor.models").Professor[];
+
   constructor(
     public httpClient: HttpClient,
     private router: Router,
     private thfNotification: ThfNotificationService,
     private alunoService: AlunoService,
     private disciplinaService: DisciplinaService,
-    private turmaService: TurmaService
+    private turmaService: TurmaService,
+    private professorService: ProfessorService
   ) {
     this.changeStep(1);
     this.alunosList();
     this.disciplinasList();
+    this.professorList();
   }
 
   ngOnInit(): void {
@@ -177,7 +185,7 @@ export class TurmaFormComponent implements OnInit {
       });
       this.alunoForm.reset();
       this.thfModal.close();
-      this.alunos;
+      this.alunosList();
     }
   }
 
@@ -185,8 +193,17 @@ export class TurmaFormComponent implements OnInit {
     if (this.disciplinaForm.invalid) {
       this.thfNotification.warning("Dados inválidos, confira se preencheu o formulário corretamente!")
     } else {
+      console.log(this.professorOption)
 
+      this.professores.forEach(item => {
+        if(item.id == this.professorOption.id){
+          let professor = item;
+          this.disciplina.professor = professor;
+        }
+      });
+      console.log(this.disciplina);
       this.disciplinaAdicionada.push(this.disciplina);
+
       this.disciplinaService.postDisciplina(this.disciplinaAdicionada).subscribe((res) => {
         this.thfNotification.success(`Disciplina adicionada com sucesso!`);
       });
@@ -197,7 +214,6 @@ export class TurmaFormComponent implements OnInit {
   }
 
   //Para selecionar alunos
-
   selecionarAluno(row: any) {
     if (row.value) {
       this.alunoAdicionado.concat(row);
@@ -218,4 +234,21 @@ export class TurmaFormComponent implements OnInit {
     //criar código pra subir os alunos
     this.cadastrarDisciplinas();
   }
+
+
+
+  professorList() {
+    this.professorService.getProfessores().subscribe((res) => {
+        this.professores = res;
+
+      res.forEach(item => {
+        this.professor = { label: item.nome, value: item.id };
+        console.log(this.professor);
+        this.professoresOptions.push(this.professor);
+      });
+    });
+  }
+
+
+
 }

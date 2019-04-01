@@ -1,5 +1,6 @@
 export class Pessoa {
-    nome: String;
-    email: String;
-    cpf: String;
+    nome: string;
+    email: string;
+    cpf: string;
+    id: number;
 }

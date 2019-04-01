@@ -37,19 +37,15 @@
           <thf-button class="thf-md-3" t-icon="thf-icon thf-icon-plus" t-label="Cadastrar Aluno"
             (t-click)="modal.open() " t-tooltip="Cadastrar novo aluno.">
           </thf-button>
-          <thf-button class="thf-md-3" t-icon="thf-icon thf-icon-ok"
-            t-tooltip="Adicionar alunos selecionados." t-label="Adicionar alunos" (t-click)="addToCart()">
+          <thf-button class="thf-md-3" t-icon="thf-icon thf-icon-ok" t-tooltip="Adicionar alunos selecionados."
+            t-label="Adicionar alunos" (t-click)="addToCart()">
           </thf-button>
         </div>
 
         <div class="thf-row">
-          <thf-table class="thf-md-12" 
-                  [t-items]="alunos" 
-                  t-checkbox
-                  t-hide-select-all="true"
-                  (t-selected)="selecionarAluno($event)"
-                  (t-unselected)="deselecionarAluno($event)">
-                  >
+          <thf-table class="thf-md-12" [t-items]="alunos" t-checkbox t-hide-select-all="true"
+            (t-selected)="selecionarAluno($event)" (t-unselected)="deselecionarAluno($event)">
+            >
           </thf-table>
         </div>
 
@@ -85,22 +81,22 @@
         <div class="thf-row">
 
           <thf-divider class="thf-md-6" t-label="Disciplinas"></thf-divider>
-          <thf-button class=" thf-md-3" t-icon="thf-icon thf-icon-plus"
-            t-label="Cadastrar Disciplina" (t-click)="modal.open() && createDisciplinaForm()"
-            t-tooltip="Cadastrar nova disciplina.">
+          <thf-button class=" thf-md-3" t-icon="thf-icon thf-icon-plus" t-label="Cadastrar Disciplina"
+            (t-click)="modal.open() && createDisciplinaForm()" t-tooltip="Cadastrar nova disciplina.">
           </thf-button>
-          <thf-button class="thf-md-3" t-tooltip="Adicionar disciplinas selecionadas."
-            t-icon="thf-icon thf-icon-ok" t-label="Adicionar Disciplina" (t-click)="addToCart()">
+          <thf-button class="thf-md-3" t-tooltip="Adicionar disciplinas selecionadas." t-icon="thf-icon thf-icon-ok"
+            t-label="Adicionar Disciplina" (t-click)="addToCart()">
           </thf-button>
         </div>
         <div class="thf-row">
 
-          <thf-table class="thf-md-12" [t-items]="disciplinas" t-checkbox>
+          <thf-table class="thf-md-12" [t-striped]="true"  [t-items]="disciplinas" t-checkbox>
           </thf-table>
         </div>
       </div>
 
-      <thf-modal #modal t-title="Cadastrar Disciplina" [t-primary-action]="confirmDisciplina" [t-secondary-action]="closeDisciplina">
+      <thf-modal #modal t-title="Cadastrar Disciplina" [t-primary-action]="confirmDisciplina"
+        [t-secondary-action]="closeDisciplina">
         <form #formDisciplina="ngForm">
           <div class="thf-row">
             <thf-input class="thf-md-12" name="descricao" [(ngModel)]="disciplina.descricao" t-clean
@@ -113,6 +109,10 @@
             <thf-number class="thf-lg-6" name="cargaHoraria" [(ngModel)]="disciplina.cargaHoraria"
               t-label="Carga Horária" t-clean t-required>
             </thf-number>
+          </div>
+          <div class="thf-row">
+            <thf-multiselect class="thf-lg-12" name="professor" t-label="Professor" [(ngModel)]="professorOption.id" [t-options]="professoresOptions">
+            </thf-multiselect>
           </div>
         </form>
       </thf-modal>
