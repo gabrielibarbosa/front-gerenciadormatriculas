@@ -1,4 +1,32 @@
 <thf-page-list t-title="Professores">
-  <thf-table [t-items]="professores">
-  </thf-table>
+  <div class="thf-row">
+    <thf-divider class="thf-md-9"></thf-divider>
+    <thf-button class="thf-md-3" t-icon="thf-icon thf-icon-plus" t-label="Cadastrar Professor"
+      (t-click)="modal.open()" t-tooltip="Cadastrar novo professor.">
+    </thf-button>
+
+    <thf-modal #modal t-title="Cadastrar Professor" [t-primary-action]="confirm" [t-secondary-action]="close">
+        <form #formProfessor="ngForm">
+          <div class="thf-row">
+            <thf-input class="thf-md-12" name="nome" [(ngModel)]="professor.nome" t-clean t-icon="thf-icon thf-icon-user"
+              t-label="Nome Completo" t-required>
+            </thf-input>
+          </div>
+          <div class="thf-row">
+            <thf-email class="thf-md-12" name="email" [(ngModel)]="professor.email" t-clean t-label="Email" t-required>
+            </thf-email>
+            <thf-input class="thf-md-12" name="cpf" [(ngModel)]="professor.cpf" t-clean t-label="CPF" t-required>
+            </thf-input>
+            <thf-select class="thf-md-12" name="titulacao" [(ngModel)]="professor.titulacao" t-clean
+              t-label="Forma Ingresso" [t-options]="titulacaoOptions" t-required>
+            </thf-select>
+          </div>
+        </form>
+      </thf-modal>
+
+  </div>
+  <div class="thf-row">
+    <thf-table class="thf-md-12" [t-items]="professores">
+    </thf-table>
+  </div>
 </thf-page-list>

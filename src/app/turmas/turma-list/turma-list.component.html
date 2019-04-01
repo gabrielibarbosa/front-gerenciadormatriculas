@@ -1,5 +1,12 @@
-<thf-page-list
-  t-title="Turmas">
-  <thf-table [t-items]="turmas">
-  </thf-table>
+<thf-page-list t-title="Turmas">
+  <div class="thf-row">
+    <thf-divider class="thf-md-9"></thf-divider>
+    <thf-button class="thf-md-3" t-icon="thf-icon thf-icon-plus" t-label="Cadastrar Turma" (t-click)="cadastrarTurma()"
+      t-tooltip="Cadastrar novo professor.">
+    </thf-button>
+  </div>
+  <div class="thf-row">
+    <thf-table  class="thf-md-12" [t-items]="turmas">
+    </thf-table>
+  </div>
 </thf-page-list>

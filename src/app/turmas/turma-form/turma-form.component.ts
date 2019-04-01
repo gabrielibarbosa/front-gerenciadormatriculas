@@ -45,7 +45,6 @@ export class TurmaFormComponent implements OnInit {
   alunoAdicionado: Array<any> = [];
   disciplinaAdicionada: Array<any> = [];
 
-
   buttonWidget: string;
 
   constructor(
@@ -178,6 +177,7 @@ export class TurmaFormComponent implements OnInit {
       });
       this.alunoForm.reset();
       this.thfModal.close();
+      this.alunos;
     }
   }
 
@@ -192,6 +192,7 @@ export class TurmaFormComponent implements OnInit {
       });
       this.disciplinaForm.reset();
       this.thfModal.close();
+      this.disciplinasList();
     }
   }
 

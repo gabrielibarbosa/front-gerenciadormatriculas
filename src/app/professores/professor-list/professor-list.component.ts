@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ProfessorService } from 'src/app/provider/professores/professor.service';
+import { ThfSelectOption, ThfModalAction, ThfModalComponent, ThfNotificationService } from '@totvs/thf-ui';
+import { TipoTitulacao, Professor } from '../professor.models';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-professor-list',
@@ -9,19 +12,61 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ProfessorListComponent implements OnInit {
 
-  private readonly url: string = 'http://localhost:3000/professores/listar'
-  private professoresSub: Subscription;
+  private professores: Array<Professor> = [];
+  professor: any = {};
 
-  private professores: Array<any> = [];
+  @ViewChild('formProfessor') professorForm: NgForm;
+  @ViewChild(ThfModalComponent) thfModal: ThfModalComponent;
 
-  constructor(private http: HttpClient) { }
+
+  constructor(private http: HttpClient,
+              private professorService: ProfessorService,
+              private thfNotification: ThfNotificationService,) { }
 
   ngOnInit() {
-     this.professoresSub = this.http.get(this.url).subscribe((response:any)=>{
-      console.log("To aqui"+ response);
-      this.professores =  response;
-    });
-
+    this.professorList();
   }
 
+  professorList(){
+    this.professorService.getProfessores().subscribe((res) => {
+      this.professores = res;
+    
+    });
+  }
+
+  public titulacaoOptions: Array<ThfSelectOption> = [
+    { value: TipoTitulacao.MESTRE, label: 'Mestre' },
+    { value: TipoTitulacao.DOUTOR, label: 'Doutor' },
+    { value: TipoTitulacao.PHD, label: 'PHD' },
+  ];
+
+  close: ThfModalAction = {
+    action: () => {
+      this.professorForm.reset();
+      this.thfModal.close();
+    },
+    label: 'Cancelar',
+    danger: true
+  };
+
+  confirm: ThfModalAction = {
+    action: () => {
+      this.cadastrarProfessor();
+    },
+    label: 'Confirmar'
+  };
+
+  cadastrarProfessor() {
+    if (this.professorForm.invalid) {
+      this.thfNotification.warning("Dados inválidos, confira se preencheu o formulário corretamente!")
+    } else {
+
+      this.professorService.postProfessor(this.professor).subscribe((res) => {
+        this.thfNotification.success(`Professor adicionado com sucesso!`);
+      });
+      this.professorForm.reset();
+      this.thfModal.close();
+      this.professorList();
+    }
+  }
 }
